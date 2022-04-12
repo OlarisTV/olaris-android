@@ -8,9 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.GridLayoutManager
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import tv.olaris.android.R
 import tv.olaris.android.databinding.FragmentMovieLibraryBinding
+import tv.olaris.android.models.Movie
 
 private const val ARG_SERVER_ID = "serverId"
 const val movieGridSize = 3
@@ -46,7 +53,7 @@ class MovieLibrary : Fragment() {
         super.onActivityCreated(savedInstanceState)
         val adapter = MovieItemAdapter(requireContext(), serverId)
 
-        binding.movieRecycleview.adapter = adapter
+        binding.movieRecycleview.adapter = adapter.withLoadStateHeaderAndFooter(header = LoadStateAdapter(adapter::retry), footer = LoadStateAdapter(adapter::retry))
 
         if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             binding.movieRecycleview.layoutManager =
@@ -59,16 +66,26 @@ class MovieLibrary : Fragment() {
                 GridLayoutManager(context, resources.getInteger(R.integer.library_column_count))
         }
 
-        viewModel.dataLoaded.observe(viewLifecycleOwner) {
-            if (it) {
-                binding.progressBarMovieLibrary.visibility = View.INVISIBLE
-            } else {
-                binding.progressBarMovieLibrary.visibility = View.VISIBLE
-            }
-        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            Log.d("fragment", "onActivityCreated: launch")
 
-        viewModel.movies.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
+
+            viewModel.flow.collectLatest { pagingData: PagingData<Movie> ->
+                adapter.submitData(pagingData)
+
+            }
+
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            Log.d("fragment", "onActivityCreated: launc2h")
+
+            adapter.loadStateFlow.collect {
+                // to determine if we are done with the loading state,
+                // you should have already  shown your loading view elsewhere when the entering your fragment
+                if (it.prepend is LoadState.NotLoading && it.prepend.endOfPaginationReached) {
+                    binding.progressBarMovieLibrary.visibility = View.GONE
+                }
+            }
         }
 
         viewModel.loadData(serverId)

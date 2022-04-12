@@ -53,9 +53,13 @@ class MediaItemAdapter(context: Context) :
         }
 
         holder.subText.text = mi.subTitle
-        Glide.with(holder.itemView.context).load(mi.fullPosterUrl())
-            .placeholder(R.drawable.placeholder_coverart).error(ColorDrawable(Color.RED))
-            .into(holder.coverArt);
+
+        if(mi.hasPosterPath()) {
+            Glide.with(holder.itemView.context).load(mi.fullPosterUrl())
+                .placeholder(R.drawable.placeholder_coverart).error(ColorDrawable(Color.RED))
+                .into(holder.coverArt);
+        }
+
         holder.itemView.setOnClickListener {
             if(mi.serverId != null) {
                 val action = HomeFragmentDirections.actionHomeFragmentToMediaPlayerActivity(

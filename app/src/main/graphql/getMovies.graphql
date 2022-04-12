@@ -1,0 +1,14 @@
+query GetMovies($limit: Int!, $offset: Int!){
+    movies(limit: $limit, offset: $offset, sort: title){
+        ...movieBase
+    }
+}
+query GetSparseMovies($limit: Int!, $offset: Int!){
+    movies(limit: $limit, offset: $offset, sort: title){
+        posterPath
+        uuid
+        playState{
+            ...playstateBase
+        }
+    }
+}

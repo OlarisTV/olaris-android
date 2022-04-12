@@ -65,7 +65,7 @@ class OlarisApplication : Application() {
     }
 
     suspend fun checkServer(server: Server, updateRecord: Boolean = true): Boolean {
-        Log.d("refreshDebug", "Checking if server is online")
+        Log.d("refreshDebug", "Checking if server: ${server.name}, is online")
 
         try {
             val version = OlarisHttpService(server.url).getVersion()
@@ -82,20 +82,29 @@ class OlarisApplication : Application() {
 
                     serversRepository.updateServer(server)
                 }
+            }else {
+                Log.d("refreshDebug", "No change for ${server.name}.")
             }
             return true
 
         } catch (e: ConnectException) {
-            if (server.isOnline) {
-                server.isOnline = false
-                Log.d("refreshDebug", "Server is ${server.isOnline}")
-
-                if (updateRecord) {
-                    Log.d("refreshDebug", "Updating record")
-                    serversRepository.updateServer(server)
-                }
-            }
+            setOffline(server, updateRecord)
             return false
+        } catch(exception: java.net.SocketTimeoutException){
+            setOffline(server, updateRecord)
+            return false
+        }
+    }
+
+    suspend fun setOffline(server: Server, updateRecord: Boolean){
+        if (server.isOnline) {
+            server.isOnline = false
+            Log.d("refreshDebug", "Server is ${server.isOnline}")
+
+            if (updateRecord) {
+                Log.d("refreshDebug", "Updating record")
+                serversRepository.updateServer(server)
+            }
         }
     }
 
@@ -104,13 +113,11 @@ class OlarisApplication : Application() {
 
         Timer().scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
-                Log.d("ASD", "run: checking")
-
                 applicationScope.launch {
                     checkServerStatus()
                 }
             }
-        }, 1000, 10000)
+        }, 2000, 12000)
     }
 
     companion object {

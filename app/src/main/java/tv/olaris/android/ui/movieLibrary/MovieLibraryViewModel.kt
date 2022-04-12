@@ -1,22 +1,26 @@
 package tv.olaris.android.ui.movieLibrary
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
-import tv.olaris.android.OlarisApplication
-import tv.olaris.android.models.Movie
 
 class MovieLibraryViewModel : ViewModel() {
-    private var _movies = MutableLiveData<List<Movie>>()
-    val movies: LiveData<List<Movie>> = _movies
+    // TODO: Can hardcoded 1 as initial value break this? Can we somehow make this a union of null and 1 and only act on an int?
+    private val queryFlow = MutableStateFlow(value = 1)
 
-    private var _dataLoaded = MutableLiveData<Boolean>()
-    val dataLoaded: LiveData<Boolean> = _dataLoaded
+    val flow = queryFlow.flatMapLatest {  serverId ->
+        //TODO: This probably can't be cached now as we keep making a new pager, we need some better way of doing this
+        Pager(PagingConfig(pageSize = MOVIES_PER_QUERY)) {
+            MoviesPagingSource(serverId = serverId)
+        }.flow.cachedIn(viewModelScope)
+    }
 
     fun loadData(serverId: Int) = viewModelScope.launch {
-        _movies.value = OlarisApplication.applicationContext().getOrInitRepo(serverId).getAllMovies()
-        _dataLoaded.value = true
+        queryFlow.emit(serverId)
     }
 }

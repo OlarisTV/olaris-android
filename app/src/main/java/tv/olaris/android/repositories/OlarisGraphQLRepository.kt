@@ -8,10 +8,12 @@ import CreateStreamingTicketMutation
 import FindMovieQuery
 import FindSeasonQuery
 import FindSeriesQuery
+import GetMoviesQuery
 import RecentlyAddedQuery
 import android.util.Log
 import com.apollographql.apollo.coroutines.await
 import com.apollographql.apollo.exception.ApolloException
+import com.apollographql.apollo.exception.ApolloParseException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import tv.olaris.android.OlarisApplication
@@ -45,7 +47,9 @@ class OlarisGraphQLRepository(private var server: Server) {
                 }
             }
         } catch (e: ApolloException) {
-            logException(e)
+            logException("FindRecentlyAddeD", e)
+        }catch(e: ApolloParseException){
+            logException("FindRecentlyAddeD parse", e)
         }
         return list
     }
@@ -72,7 +76,9 @@ class OlarisGraphQLRepository(private var server: Server) {
                 }
             }
         } catch (e: ApolloException) {
-            logException(e)
+            logException("FIndContinueWatch", e)
+        } catch(e: ApolloParseException){
+            logException("FIndContinueWatch parse", e)
         }
 
         return list
@@ -89,7 +95,7 @@ class OlarisGraphQLRepository(private var server: Server) {
                 )
             olarisClient.get().mutate(m).await()
         } catch (e: ApolloException) {
-            logException(e)
+            logException("UpdatePlaystate", e)
         }
     }
 
@@ -103,7 +109,7 @@ class OlarisGraphQLRepository(private var server: Server) {
             }
 
         } catch (e: ApolloException) {
-            logException(e)
+            logException("GetStreamingURL",e)
         }
         return null
     }
@@ -118,10 +124,30 @@ class OlarisGraphQLRepository(private var server: Server) {
             }
 
         } catch (e: ApolloException) {
-            logException(e)
+            logException("FindMovieByUUID", e)
+        }catch (e: ApolloParseException){
+            logException("FindMovieByUUID-ParseException", e)
+
         }
 
         return@withContext movie
+    }
+
+    // We expect this can fail but this is being caught in the PagingSource
+    suspend fun getMovies(limit: Int, offset: Int): List<Movie> = withContext(Dispatchers.IO){
+        var movies: MutableList<Movie> = mutableListOf()
+
+        Log.d("Olaris", "getMovies: Getting movies from GraphQL")
+        val res = olarisClient.get().query(GetMoviesQuery(limit = limit,offset = offset)).await()
+        Log.d("Olaris", "getMovies: Done getting movies from GraphQL $res")
+        if (res.data != null && res.data?.movies != null) {
+            for (movie in res.data!!.movies) {
+                val m = movie!!
+                movies.add(Movie.createFromGraphQLMovieBase(m.fragments.movieBase, server.id))
+            }
+        }
+
+        return@withContext movies.toList()
     }
 
     suspend fun getAllMovies(): List<Movie> = withContext(Dispatchers.IO) {
@@ -138,7 +164,7 @@ class OlarisGraphQLRepository(private var server: Server) {
                 return@withContext movies.toList()
             }
         } catch (e: ApolloException) {
-            logException(e)
+            logException("getAllMovies", e)
         }
 
         return@withContext movies
@@ -151,7 +177,7 @@ class OlarisGraphQLRepository(private var server: Server) {
                 return Show.buildSeason(res.data!!.season.fragments.seasonBase, server.id)
             }
         } catch (e: ApolloException) {
-            logException(e)
+            logException("findSeasonByUUID", e)
         }
         return null
     }
@@ -170,7 +196,7 @@ class OlarisGraphQLRepository(private var server: Server) {
                 }
             }
         } catch (e: ApolloException) {
-            logException(e)
+            logException("GetALlShows", e)
         }
         return shows
     }
@@ -182,13 +208,13 @@ class OlarisGraphQLRepository(private var server: Server) {
                 return Show.createFromGraphQLSeriesBase(res.data!!.series.first()!!.fragments.seriesBase, server.id)
             }
         } catch (e: ApolloException) {
-            logException(e)
+            logException("findShowByUUID", e)
         }
         return null
     }
 
-    private fun logException(e: ApolloException) {
-        Log.e("apollo", "Error getting data: ${e.localizedMessage}")
+    private fun logException(from: String, e: ApolloException) {
+        Log.e("apollo", "Helpie from $from! Error getting data: ${e.localizedMessage}")
         Log.e("apollo", "Cause: ${e.cause}")
         Log.e("apollo", e.toString())
     }

@@ -13,6 +13,11 @@ open class MediaItem(
     var finished: Boolean = false,
     val baseImageUrl: String = "https://image.tmdb.org/t/p/",
     ) {
+
+    fun hasPosterPath(): Boolean{
+        return this.posterPath != ""
+    }
+
     fun playProgress(): Double{
        return ((100 * playtime) / runtime)
     }

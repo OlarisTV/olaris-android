@@ -1,8 +1,6 @@
 package tv.olaris.android.ui.movieDetails
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,10 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import tv.olaris.android.R
 import tv.olaris.android.databinding.FragmentMovieDetailsBinding
 
@@ -40,42 +34,23 @@ class MovieDetails : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.progressBarMovieItem.visibility = View.VISIBLE
 
-        sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.move)
-         postponeEnterTransition()
 
         viewModel.coverArtUrl.observe(viewLifecycleOwner){
             Glide.with(view.context).load(it).into(binding.imageMovieDetailsCovertArt)
         }
 
+        // Can we somehow pass this image through the navigator so it doesn't have to be retrieved twice?
         viewModel.posterUrl.observe(viewLifecycleOwner){
-            Glide.with(view.context).load(it).dontAnimate().listener(object : RequestListener<Drawable> {
-                override fun onResourceReady(
-                    resource: Drawable?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    dataSource: DataSource?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    startPostponedEnterTransition()
-                    return false
-                }
-
-                override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    return false
-                }
-            }).into(binding.imageMovieDetailsPostertArt)
+            Glide.with(view.context).load(it).into(binding.imageMovieDetailsPostertArt)
         }
 
         viewModel.movie.observe(viewLifecycleOwner){
-            val movie = it!!
-
             binding.progressBarMovieItem.visibility = View.INVISIBLE
+
+           // binding.layoutMovieDetails.visibility = View.VISIBLE
+            val movie = it!!
 
             binding.textMovieDetailsMovieName.text = movie.title
             binding.textMovieDetailsYearAndRuntime.text = getString(R.string.movie_year_and_runtime, movie.year.toString(), movie.getRuntime().toString(), movie.getResolution())
@@ -97,6 +72,7 @@ class MovieDetails : Fragment() {
                     )
                 findNavController().navigate(action)
             }
+            binding.layoutMovieDetails.visibility = View.VISIBLE
         }
 
         viewModel.getMovie(uuid = uuid!!, serverId = serverId)

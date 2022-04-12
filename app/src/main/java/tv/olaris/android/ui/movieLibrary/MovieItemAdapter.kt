@@ -11,14 +11,14 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import tv.olaris.android.R
 import tv.olaris.android.models.Movie
 
-class MovieItemAdapter(context: Context, val serverId: Int): ListAdapter<Movie, MovieItemAdapter.MovieItemHolder>(
+class MovieItemAdapter(context: Context, val serverId: Int): PagingDataAdapter<Movie, MovieItemAdapter.MovieItemHolder>(
     DiffCallback()
 ) {
 
@@ -34,7 +34,7 @@ class MovieItemAdapter(context: Context, val serverId: Int): ListAdapter<Movie, 
     }
 
     override fun onBindViewHolder(holder: MovieItemHolder, position: Int) {
-        val m = getItem(position)
+        val m = getItem(position)!!
 
         if(m.hasStarted()){
             holder.progressBar.progress = m.playProgress().toInt()
@@ -43,14 +43,21 @@ class MovieItemAdapter(context: Context, val serverId: Int): ListAdapter<Movie, 
         }
 
         holder.textEpisodeCounter.visibility = View.INVISIBLE
-        Glide.with(holder.itemView.context).load(m.fullPosterUrl()).placeholder(R.drawable.placeholder_coverart).error(ColorDrawable(Color.RED)).into(holder.movieCoverArt);
-        holder.movieCoverArt.transitionName = m.fullPosterUrl()
+
         holder.movieCoverArt.setOnClickListener{
             val uuid = m.uuid
             val extras = FragmentNavigatorExtras(holder.movieCoverArt to uuid)
             val action = MovieLibraryDirections.actionMovieLibraryFragmentToMovieDetailsFragment(uuid = uuid, serverId = serverId)
             holder.view.findNavController().navigate(action, extras)
         }
+
+        if(m.hasPosterPath()) {
+            Glide.with(holder.itemView.context).load(m.fullPosterUrl())
+                .placeholder(R.drawable.placeholder_coverart).error(ColorDrawable(Color.RED))
+                .into(holder.movieCoverArt);
+        }
+        holder.movieCoverArt.transitionName = m.fullPosterUrl()
+
     }
 }
 

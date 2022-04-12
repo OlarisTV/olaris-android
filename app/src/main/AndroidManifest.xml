@@ -17,17 +17,19 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+
         android:theme="@style/Theme.OlarisAndroid"
         android:usesCleartextTraffic="true">
 
         <activity
+            android:exported="false"
             android:name=".MediaPlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_media_player"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
         </activity>
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

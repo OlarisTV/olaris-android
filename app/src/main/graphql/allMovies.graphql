@@ -1,5 +1,5 @@
-query AllMovies {
-      movies(limit: 999) {
-          ...movieBase
-      }
+query AllMovies() {
+    movies(limit: 999) {
+        ...movieBase
+    }
 }

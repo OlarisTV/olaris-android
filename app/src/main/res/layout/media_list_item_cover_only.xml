@@ -28,6 +28,7 @@
                 android:layout_height="wrap_content"
                 android:transitionName="mediaItemList"
                 android:scaleType="centerCrop"
+                android:src="@drawable/placeholder_coverart"
                 app:srcCompat="@drawable/matrix" />
 
             <TextView

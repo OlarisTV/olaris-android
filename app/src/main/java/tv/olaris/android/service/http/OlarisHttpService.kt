@@ -18,14 +18,18 @@ class OlarisHttpService(val baseUrl: String) {
     suspend fun getVersion() : String{
         val versionURL = baseUrl + "/olaris/m/v1/version"
         try {
-            val client = HttpClient(Android)
+            val client = HttpClient(Android){
+                install(HttpTimeout){
+                    requestTimeoutMillis = 5000
+                }
+            }
             return client.get<String>(versionURL)
         }catch(e: ClientRequestException){
-            if(e.response.status.value == 404) {
-                return ""
+            return if(e.response.status.value == 404) {
+                ""
             }else{
                 Log.e("olarisHttpServer", "Received an error: ${e.message}")
-                return "TODO"
+                "TODO"
             }
 
         }
