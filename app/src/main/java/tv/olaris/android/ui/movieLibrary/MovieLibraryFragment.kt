@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
@@ -26,7 +25,7 @@ class MovieLibrary : Fragment() {
     private var _binding: FragmentMovieLibraryBinding? = null
     private val binding get() = _binding!!
     private var serverId: Int = 0
-    private val viewModel: MovieLibraryViewModel by viewModels()
+    private lateinit var viewModel: MovieLibraryViewModel
 
     companion object {
         fun newInstance() = MovieLibrary()
@@ -38,7 +37,7 @@ class MovieLibrary : Fragment() {
             serverId = it.getInt(ARG_SERVER_ID)
             Log.d("server_id", serverId.toString())
         }
-
+        viewModel =  MovieLibraryViewModel(serverId)
     }
 
     override fun onCreateView(
@@ -87,8 +86,6 @@ class MovieLibrary : Fragment() {
                 }
             }
         }
-
-        viewModel.loadData(serverId)
     }
 
 }

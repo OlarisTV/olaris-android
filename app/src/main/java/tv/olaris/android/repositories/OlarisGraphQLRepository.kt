@@ -50,6 +50,8 @@ class OlarisGraphQLRepository(private var server: Server) {
             logException("FindRecentlyAddeD", e)
         }catch(e: ApolloParseException){
             logException("FindRecentlyAddeD parse", e)
+        }catch(e: Exception){
+            logException("findRecently ALL", e)
         }
         return list
     }
@@ -79,6 +81,8 @@ class OlarisGraphQLRepository(private var server: Server) {
             logException("FIndContinueWatch", e)
         } catch(e: ApolloParseException){
             logException("FIndContinueWatch parse", e)
+        }catch(e: Exception){
+            logException("findContinue ALL", e)
         }
 
         return list
@@ -213,7 +217,7 @@ class OlarisGraphQLRepository(private var server: Server) {
         return null
     }
 
-    private fun logException(from: String, e: ApolloException) {
+    private fun logException(from: String, e: Exception) {
         Log.e("apollo", "Helpie from $from! Error getting data: ${e.localizedMessage}")
         Log.e("apollo", "Cause: ${e.cause}")
         Log.e("apollo", e.toString())
