@@ -1,82 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="20dp"
-    tools:context=".ui.addServer.AddServerFragment">
-    <LinearLayout
-        android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:padding="20dp"
+        tools:context=".ui.addServer.AddServerFragment">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_marginBottom="25dp"
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:startIconDrawable="@drawable/ic_baseline_computer_24"
-            android:hint="@string/server_url">
+            android:layout_height="match_parent">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/text_edit_server_url"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="http://"
-                tools:text="http://192.168.11.23:8080" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_marginBottom="25dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:startIconDrawable="@drawable/ic_baseline_person_outline_24"
-            android:hint="@string/hint_username">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/text_edit_username"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="maran" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:startIconDrawable="@drawable/ic_baseline_lock_24"
-            android:hint="@string/password">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/text_edit_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_marginBottom="25dp"
-                android:inputType="textPassword"
-                tools:text="testtest" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:startIconDrawable="@drawable/ic_baseline_label_24"
-            android:hint="Label">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/text_edit_server_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/ic_baseline_computer_24"
+                android:hint="@string/server_url">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/text_edit_server_url"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="http://"
+                    tools:text="http://192.168.11.23:8080" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_marginBottom="25dp"
-                tools:text="Atalanta" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/ic_baseline_person_outline_24"
+                android:hint="@string/hint_username">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_add_server"
-            android:layout_width="match_parent"
-            android:text="@string/add_server"
-            android:layout_height="wrap_content">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/text_edit_username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:text="maran" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        </com.google.android.material.button.MaterialButton>
-    </LinearLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/ic_baseline_lock_24"
+                android:hint="@string/password">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/text_edit_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="25dp"
+                    android:inputType="textPassword"
+                    tools:text="testtest" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:startIconDrawable="@drawable/ic_baseline_label_24"
+                android:hint="Label">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/text_edit_server_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="25dp"
+                    tools:text="Atalanta" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_add_server"
+                android:layout_width="match_parent"
+                android:text="@string/add_server"
+                android:layout_height="wrap_content">
+
+            </com.google.android.material.button.MaterialButton>
+        </LinearLayout>
 
 
-</FrameLayout>
+    </FrameLayout>
+</layout>

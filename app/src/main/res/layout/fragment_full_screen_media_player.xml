@@ -1,19 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:fitsSystemWindows="true"
-    tools:context=".ui.mediaPlayer.MediaPlayerFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.google.android.exoplayer2.ui.StyledPlayerView
-        android:id="@+id/exo_player_full_screen"
-        app:show_subtitle_button="true"
-        app:resize_mode="fill"
-        android:fitsSystemWindows="true"
+    <data>
 
+    </data>
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        tools:context=".ui.mediaPlayer.MediaPlayerFragment">
 
-</FrameLayout>
+        <com.google.android.exoplayer2.ui.StyledPlayerView
+            android:id="@+id/exo_player_full_screen"
+            app:show_subtitle_button="true"
+            app:resize_mode="fill"
+            android:fitsSystemWindows="true"
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
+</layout>

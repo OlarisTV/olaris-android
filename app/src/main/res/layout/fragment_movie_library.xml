@@ -1,27 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.movieLibrary.MovieLibrary">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ProgressBar
-        android:id="@+id/progress_bar_movie_library"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:visibility="visible"
-        android:layout_height="wrap_content"
-        android:indeterminate="true"/>
+    <data>
 
-    <androidx.recyclerview.widget.RecyclerView
+    </data>
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/movieRecycleview"
-        tools:itemCount="10"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        tools:listitem="@layout/media_list_item_cover_only"
-        >
+        tools:context=".ui.movieLibrary.MovieLibrary">
 
-    </androidx.recyclerview.widget.RecyclerView>
-</FrameLayout>
+        <ProgressBar
+            android:id="@+id/progress_bar_movie_library"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:visibility="visible"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/movieRecycleview"
+            tools:itemCount="10"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            tools:listitem="@layout/media_list_item_cover_only">
+
+        </androidx.recyclerview.widget.RecyclerView>
+    </FrameLayout>
+</layout>

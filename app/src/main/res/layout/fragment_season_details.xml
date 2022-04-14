@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.showDetails.SeasonDetailsFragment">
-    <LinearLayout
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        tools:context=".ui.showDetails.SeasonDetailsFragment">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_episode_list"
+        <LinearLayout
             android:layout_width="match_parent"
-            tools:itemCount="4"
-            android:layout_height="match_parent"
-            tools:listitem="@layout/season_list_item"/>
-    </LinearLayout>
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_episode_list"
+                android:layout_width="match_parent"
+                tools:itemCount="4"
+                android:layout_height="match_parent"
+                tools:listitem="@layout/season_list_item" />
+        </LinearLayout>
 
 
-
-
-</FrameLayout>
+    </FrameLayout>
+</layout>

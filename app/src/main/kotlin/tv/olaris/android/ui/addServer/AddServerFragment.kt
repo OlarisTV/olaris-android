@@ -2,11 +2,8 @@ package tv.olaris.android.ui.addServer
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
 import androidx.navigation.findNavController
@@ -17,12 +14,10 @@ import tv.olaris.android.R
 import tv.olaris.android.databases.Server
 import tv.olaris.android.databinding.FragmentAddServerBinding
 import tv.olaris.android.service.http.OlarisHttpService
+import tv.olaris.android.ui.base.BaseFragment
 import tv.olaris.android.util.hideKeyboard
 
-class AddServerFragment : Fragment() {
-    private var _binding: FragmentAddServerBinding? = null
-    private val binding get() = _binding!!
-
+class AddServerFragment : BaseFragment<FragmentAddServerBinding>(FragmentAddServerBinding::inflate) {
     private val viewModel: ServerViewModel by viewModels()
 
 
@@ -89,8 +84,7 @@ class AddServerFragment : Fragment() {
                                 isOnline = true
                             )
                         )
-
-                     val action =
+                        val action =
                             AddServerFragmentDirections.actionFragmentAddServerToFragmentServerList()
                         view.findNavController().navigate(action)
                     }
@@ -98,13 +92,5 @@ class AddServerFragment : Fragment() {
             }
             Log.d("http", "Done doing login")
         }
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
-        // Inflate the layout for this fragment
-        _binding = FragmentAddServerBinding.inflate(inflater, container, false)
-
-        return binding.root
     }
 }
