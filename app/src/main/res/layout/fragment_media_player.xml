@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     >
 
-    <com.google.android.exoplayer2.ui.PlayerView
+    <com.google.android.exoplayer2.ui.StyledPlayerView
         android:fitsSystemWindows="true"
         android:id="@+id/simpleExoPlayerView"
         app:buffered_color="@color/purple_200"
