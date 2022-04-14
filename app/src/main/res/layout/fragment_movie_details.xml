@@ -1,177 +1,184 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal"
-    tools:context=".ui.movieDetails.MovieDetails">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ProgressBar
-        android:id="@+id/progress_bar_movie_item"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+    <data>
+
+    </data>
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:indeterminate="true"
-        android:visibility="visible" />
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        tools:context=".ui.movieDetails.MovieDetails">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="invisible"
-        android:id="@+id/layout_movie_details">
-
-        <ImageView
-            android:id="@+id/imageMovieDetailsCovertArt"
+        <ProgressBar
+            android:id="@+id/progress_bar_movie_item"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="match_parent"
-
             android:layout_height="wrap_content"
-            android:alpha="0.3"
-            tools:src="@drawable/matrix_coverart" />
+            android:indeterminate="true"
+            android:visibility="visible" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="12dp">
+            android:visibility="invisible"
+            android:id="@+id/layout_movie_details">
+
+            <ImageView
+                android:id="@+id/imageMovieDetailsCovertArt"
+                android:layout_width="match_parent"
+
+                android:layout_height="wrap_content"
+                android:alpha="0.3"
+                tools:src="@drawable/matrix_coverart" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical"
+                android:padding="12dp">
 
-                <ImageView
-                    android:id="@+id/image_movie_details_postert_art"
-                    android:layout_width="140dp"
-                    android:layout_height="200dp"
-                    android:adjustViewBounds="true"
-                    android:scaleType="centerCrop"
-                    android:transitionName="transition_movie_details"
-                    tools:src="@drawable/matrix" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/image_movie_details_postert_art"
+                        android:layout_width="140dp"
+                        android:layout_height="200dp"
+                        android:adjustViewBounds="true"
+                        android:scaleType="centerCrop"
+                        android:transitionName="transition_movie_details"
+                        tools:src="@drawable/matrix" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/text_movie_details_movie_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:fontFamily="sans-serif"
+                            android:paddingLeft="10dp"
+                            android:paddingTop="5dp"
+                            android:textAppearance="@style/MediaTitle"
+                            tools:text="The Matrix" />
+
+                        <TextView
+                            android:id="@+id/text_movie_details_year_and_runtime"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:fontFamily="sans-serif"
+                            android:paddingLeft="10dp"
+                            android:paddingTop="5dp"
+                            android:textAppearance="@style/MediaSubtitle"
+                            tools:text="1999 • 126 minutes" />
+
+                        <TextView
+                            android:id="@+id/text_movie_details_overview"
+                            android:layout_width="match_parent"
+                            android:layout_height="140dp"
+                            android:autoSizeMaxTextSize="16dp"
+                            android:autoSizeMinTextSize="9dp"
+                            android:autoSizeStepGranularity="1dp"
+                            android:autoSizeTextType="uniform"
+                            android:fontFamily="sans-serif"
+                            android:paddingLeft="10dp"
+                            android:paddingTop="5dp"
+                            android:textAppearance="@style/MediaSubtitle"
+                            tools:text="Set in the 22nd century, The Matrix tells the story of a computer hacker who joins a group of underground insurgents fighting the vast and powerful computers who now rule the earth." />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btn_play_content"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="1"
+                        android:drawableLeft="@drawable/exo_controls_play"
+                        android:text="Play" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/text_movie_details_movie_name"
+                    <View
+                        android:id="@+id/divider"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:fontFamily="sans-serif"
-                        android:paddingLeft="10dp"
-                        android:paddingTop="5dp"
-                        android:textAppearance="@style/MediaTitle"
-                        tools:text="The Matrix" />
+                        android:layout_height="1dp"
+                        android:layout_marginBottom="15dp"
+                        android:layout_weight="1"
+                        android:background="?android:attr/listDivider" />
 
-                    <TextView
-                        android:id="@+id/text_movie_details_year_and_runtime"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:fontFamily="sans-serif"
-                        android:paddingLeft="10dp"
-                        android:paddingTop="5dp"
-                        android:textAppearance="@style/MediaSubtitle"
-                        tools:text="1999 • 126 minutes" />
+                        android:layout_height="wrap_content">
 
-                    <TextView
-                        android:id="@+id/text_movie_details_overview"
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="20dp"
+                            android:text="Filename:"
+                            android:textAllCaps="true"
+                            android:textColor="#7C7C7C" />
+
+                        <TextView
+                            android:id="@+id/text_movie_details_file_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="20dp"
+                            android:autoSizeMaxTextSize="14dp"
+                            android:autoSizeMinTextSize="9dp"
+                            android:autoSizeStepGranularity="1dp"
+                            android:autoSizeTextType="uniform"
+                            android:textAllCaps="false"
+                            android:textColor="#FFFFFF"
+                            tools:text="The-Matrix.mkv" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="140dp"
-                        android:autoSizeMaxTextSize="16dp"
-                        android:autoSizeMinTextSize="9dp"
-                        android:autoSizeStepGranularity="1dp"
-                        android:autoSizeTextType="uniform"
-                        android:fontFamily="sans-serif"
-                        android:paddingLeft="10dp"
-                        android:paddingTop="5dp"
-                        android:textAppearance="@style/MediaSubtitle"
-                        tools:text="Set in the 22nd century, The Matrix tells the story of a computer hacker who joins a group of underground insurgents fighting the vast and powerful computers who now rule the earth." />
-                </LinearLayout>
-            </LinearLayout>
+                        android:layout_height="wrap_content">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="20dp"
+                            android:text="Resolution:"
+                            android:textAllCaps="true"
+                            android:textColor="#7C7C7C" />
 
-                <Button
-                    android:id="@+id/btn_play_content"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_weight="1"
-                    android:drawableLeft="@drawable/exo_controls_play"
-                    android:text="Play" />
-            </LinearLayout>
+                        <TextView
+                            android:id="@+id/text_movie_details_resolution"
+                            android:layout_width="match_parent"
+                            android:layout_height="20dp"
+                            android:autoSizeMaxTextSize="14dp"
+                            android:autoSizeMinTextSize="9dp"
+                            android:autoSizeStepGranularity="1dp"
+                            android:autoSizeTextType="uniform"
+                            android:textAllCaps="false"
+                            android:textColor="#FFFFFF"
+                            tools:text="1280x720" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <View
-                    android:id="@+id/divider"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginBottom="15dp"
-                    android:layout_weight="1"
-                    android:background="?android:attr/listDivider" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="20dp"
-                        android:text="Filename:"
-                        android:textAllCaps="true"
-                        android:textColor="#7C7C7C" />
-
-                    <TextView
-                        android:id="@+id/text_movie_details_file_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="20dp"
-                        android:autoSizeMaxTextSize="14dp"
-                        android:autoSizeMinTextSize="9dp"
-                        android:autoSizeStepGranularity="1dp"
-                        android:autoSizeTextType="uniform"
-                        android:textAllCaps="false"
-                        android:textColor="#FFFFFF"
-                        tools:text="The-Matrix.mkv" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="20dp"
-                        android:text="Resolution:"
-                        android:textAllCaps="true"
-                        android:textColor="#7C7C7C" />
-
-                    <TextView
-                        android:id="@+id/text_movie_details_resolution"
-                        android:layout_width="match_parent"
-                        android:layout_height="20dp"
-                        android:autoSizeMaxTextSize="14dp"
-                        android:autoSizeMinTextSize="9dp"
-                        android:autoSizeStepGranularity="1dp"
-                        android:autoSizeTextType="uniform"
-                        android:textAllCaps="false"
-                        android:textColor="#FFFFFF"
-                        tools:text="1280x720" />
-
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-</FrameLayout>
+    </FrameLayout>
+</layout>

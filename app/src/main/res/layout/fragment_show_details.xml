@@ -1,125 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.showDetails.ShowDetailsFragment">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ScrollView
+    <data>
+
+    </data>
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:context=".ui.showDetails.ShowDetailsFragment">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <ProgressBar
-                android:id="@+id/progress_bar_show_item"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:indeterminate="true" />
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/image_view_cover_art"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:alpha="0.3"
-                tools:src="@drawable/matrix_coverart" />
+            android:layout_height="match_parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="12dp">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-                <LinearLayout
+                <ProgressBar
+                    android:id="@+id/progress_bar_show_item"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:indeterminate="true" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <ImageView
-                        android:id="@+id/image_view_show_poster"
-                        android:layout_width="140dp"
-                        android:layout_height="200dp"
-                        android:adjustViewBounds="true"
-                        android:scaleType="centerCrop"
-
-                        tools:src="@drawable/matrix" />
+                        android:id="@+id/image_view_cover_art"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:alpha="0.3"
+                        tools:src="@drawable/matrix_coverart" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:padding="12dp">
 
-                        <TextView
-                            android:id="@+id/text_show_details_show_name"
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:fontFamily="sans-serif"
-                            android:paddingLeft="10dp"
-                            android:paddingTop="5dp"
-                            android:textAppearance="@style/MediaTitle"
-                            tools:text="The Big Bang Theory" />
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
 
-                        <TextView
-                            android:id="@+id/text_show_details_air_date"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:fontFamily="sans-serif"
-                            android:paddingLeft="10dp"
-                            android:paddingTop="5dp"
-                            android:textAppearance="@style/MediaSubtitle"
-                            tools:text="First air date 1994" />
+                            <ImageView
+                                android:id="@+id/image_view_show_poster"
+                                android:layout_width="140dp"
+                                android:layout_height="200dp"
+                                android:adjustViewBounds="true"
+                                android:scaleType="centerCrop"
 
-                        <TextView
-                            android:id="@+id/text_show_details_overview"
+                                tools:src="@drawable/matrix" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/text_show_details_show_name"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:fontFamily="sans-serif"
+                                    android:paddingLeft="10dp"
+                                    android:paddingTop="5dp"
+                                    android:textAppearance="@style/MediaTitle"
+                                    tools:text="The Big Bang Theory" />
+
+                                <TextView
+                                    android:id="@+id/text_show_details_air_date"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:fontFamily="sans-serif"
+                                    android:paddingLeft="10dp"
+                                    android:paddingTop="5dp"
+                                    android:textAppearance="@style/MediaSubtitle"
+                                    tools:text="First air date 1994" />
+
+                                <TextView
+                                    android:id="@+id/text_show_details_overview"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="140dp"
+                                    android:autoSizeMaxTextSize="16dp"
+                                    android:autoSizeMinTextSize="9dp"
+                                    android:autoSizeStepGranularity="1dp"
+                                    android:autoSizeTextType="uniform"
+                                    android:fontFamily="sans-serif"
+                                    android:paddingLeft="10dp"
+                                    android:paddingTop="5dp"
+                                    android:textAppearance="@style/MediaSubtitle"
+                                    tools:text="Set in the 22nd century, The Matrix tells the story of a computer hacker who joins a group of underground insurgents fighting the vast and powerful computers who now rule the earth." />
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="140dp"
-                            android:autoSizeMaxTextSize="16dp"
-                            android:autoSizeMinTextSize="9dp"
-                            android:autoSizeStepGranularity="1dp"
-                            android:autoSizeTextType="uniform"
-                            android:fontFamily="sans-serif"
-                            android:paddingLeft="10dp"
-                            android:paddingTop="5dp"
-                            android:textAppearance="@style/MediaSubtitle"
-                            tools:text="Set in the 22nd century, The Matrix tells the story of a computer hacker who joins a group of underground insurgents fighting the vast and powerful computers who now rule the earth." />
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:orientation="vertical">
+
+                            <com.google.android.material.tabs.TabLayout
+                                android:id="@+id/tab_layout_season_list"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:tabContentStart="40dp"
+                                app:tabMode="scrollable">
+
+                            </com.google.android.material.tabs.TabLayout>
+
+                            <androidx.viewpager2.widget.ViewPager2 xmlns:android="http://schemas.android.com/apk/res/android"
+                                android:id="@+id/pager_show_detail_seasons"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+
+                            </androidx.viewpager2.widget.ViewPager2>
+                        </LinearLayout>
+
                     </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:orientation="vertical">
-
-                    <com.google.android.material.tabs.TabLayout
-                        android:id="@+id/tab_layout_season_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:tabContentStart="40dp"
-                        app:tabMode="scrollable">
-
-                    </com.google.android.material.tabs.TabLayout>
-
-                    <androidx.viewpager2.widget.ViewPager2 xmlns:android="http://schemas.android.com/apk/res/android"
-                        android:id="@+id/pager_show_detail_seasons"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-
-                    </androidx.viewpager2.widget.ViewPager2>
-                </LinearLayout>
-
+                </FrameLayout>
             </LinearLayout>
-            </FrameLayout>
-        </LinearLayout>
 
-    </ScrollView>
-</FrameLayout>
+        </ScrollView>
+    </FrameLayout>
+</layout>

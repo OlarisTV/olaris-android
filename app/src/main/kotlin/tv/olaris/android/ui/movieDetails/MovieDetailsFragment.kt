@@ -1,24 +1,19 @@
 package tv.olaris.android.ui.movieDetails
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import tv.olaris.android.R
 import tv.olaris.android.databinding.FragmentMovieDetailsBinding
+import tv.olaris.android.ui.base.BaseFragment
 
 
 private const val ARG_UUID = "uuid"
 private const val ARG_SERVER_ID = "server_id"
 
-class MovieDetails : Fragment() {
-    private var _binding: FragmentMovieDetailsBinding? = null
-    private val binding get() = _binding!!
-
+class MovieDetails : BaseFragment<FragmentMovieDetailsBinding>(FragmentMovieDetailsBinding::inflate) {
     private var uuid: String? = null
     private var serverId: Int = 0
     private val viewModel: MovieDetailsViewModel by viewModels()
@@ -76,14 +71,5 @@ class MovieDetails : Fragment() {
         }
 
         viewModel.getMovie(uuid = uuid!!, serverId = serverId)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        // Inflate the layout for this fragment
-        _binding = FragmentMovieDetailsBinding.inflate(inflater, container, false)
-        return binding.root
     }
 }

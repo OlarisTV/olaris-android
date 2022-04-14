@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.showLibrary.ShowLibrary">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ProgressBar
-    android:id="@+id/progress_bar_show_library"
-    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:indeterminate="true"/>
+    <data>
 
-    <androidx.recyclerview.widget.RecyclerView
+    </data>
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/recycler_show_library"
-        tools:listitem="@layout/media_list_item_cover_only"
-        />
+        tools:context=".ui.showLibrary.ShowLibrary">
 
-</FrameLayout>
+        <ProgressBar
+            android:id="@+id/progress_bar_show_library"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/recycler_show_library"
+            tools:listitem="@layout/media_list_item_cover_only" />
+
+    </FrameLayout>
+</layout>

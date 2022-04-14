@@ -3,12 +3,10 @@ package tv.olaris.android.ui.mediaPlayer
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import tv.olaris.android.databinding.FragmentFullScreenMediaPlayerBinding
+import tv.olaris.android.ui.base.BaseFragment
 import tv.olaris.android.util.disableFullscreen
 import tv.olaris.android.util.enableFullscreen
 
@@ -18,7 +16,7 @@ private const val ARG_PLAYTIME = "playtime"
 private const val ARG_MEDIA_UUID = "mediaUuid"
 private const val TAG = "mediaplayer"
 
-class MediaPlayerFragment : Fragment() {
+class MediaPlayerFragment : BaseFragment<FragmentFullScreenMediaPlayerBinding>(FragmentFullScreenMediaPlayerBinding::inflate) {
     private var currentWindow = 0
     private var serverId: Int = 0
     private var uuid: String = ""
@@ -26,14 +24,8 @@ class MediaPlayerFragment : Fragment() {
     private var playbackPosition: Int = 0
     private val viewModel: MediaPlayerViewModel by viewModels()
 
-    private var _binding: FragmentFullScreenMediaPlayerBinding? = null
-    private val binding get() = _binding!!
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         arguments?.let {
             serverId = it.getInt(ARG_SERVERID)
             uuid = it.getString(ARG_UUID).toString()
@@ -42,13 +34,6 @@ class MediaPlayerFragment : Fragment() {
         }
 
         Log.d(TAG, "Creating view, arguments Server: $serverId")
-
-        _binding = FragmentFullScreenMediaPlayerBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
 
         //This can force landscape
         requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
