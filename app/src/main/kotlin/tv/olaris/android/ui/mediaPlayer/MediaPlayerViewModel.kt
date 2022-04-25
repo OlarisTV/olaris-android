@@ -8,6 +8,8 @@ import com.google.android.exoplayer2.util.MimeTypes
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import tv.olaris.android.OlarisApplication
+import tv.olaris.android.repositories.OlarisGraphQLRepository
+import tv.olaris.android.repositories.ServersRepository
 
 
 class MediaPlayerLifecycleObserver(private val viewModel: MediaPlayerViewModel) :
@@ -24,8 +26,10 @@ class MediaPlayerLifecycleObserver(private val viewModel: MediaPlayerViewModel) 
     }
 }
 
-class MediaPlayerViewModel() : ViewModel(), Player.Listener {
-    var serverId: Int = 0
+class MediaPlayerViewModel(
+    private val graphQLRepository: OlarisGraphQLRepository,
+    private val serversRepository: ServersRepository,
+) : ViewModel(), Player.Listener {
     var uuid: String = ""
     var mediaUUID = ""
     var currentPos: Long = 0
@@ -38,7 +42,8 @@ class MediaPlayerViewModel() : ViewModel(), Player.Listener {
     private val lifecycleObserver = MediaPlayerLifecycleObserver(this)
 
     private val streamingUrl: LiveData<String> = liveData {
-        var streamingURL = OlarisApplication.applicationContext().getOrInitRepo(serverId).getStreamingUrl(
+        var streamingURL = graphQLRepository.getStreamingUrl(
+            serversRepository.getCurrentServer(),
             uuid
         )
         if (streamingURL != null) {
@@ -53,12 +58,14 @@ class MediaPlayerViewModel() : ViewModel(), Player.Listener {
     }
 
     override fun onPlayerError(error: PlaybackException) {
-        android.util.Log.d("mediaplayer", "onPlayerError: ${error.message}: ${error.stackTraceToString()}")
+        android.util.Log.d(
+            "mediaplayer",
+            "onPlayerError: ${error.message}: ${error.stackTraceToString()}"
+        )
     }
 
     // TODO: Fix these arguments here.
-    fun getStreamingUrl(s: Int, u: String): LiveData<String> {
-        serverId = s
+    fun getStreamingUrl(u: String): LiveData<String> {
         uuid = u
 
         return streamingUrl
@@ -68,7 +75,8 @@ class MediaPlayerViewModel() : ViewModel(), Player.Listener {
         val player = playerOrNull ?: return
         currentPos = player.currentPosition
 
-        OlarisApplication.applicationContext().getOrInitRepo(serverId).updatePlayState(
+        graphQLRepository.updatePlayState(
+            serversRepository.getCurrentServer(),
             mediaUUID,
             false,
             (currentPos / 1000).toDouble()
@@ -123,8 +131,8 @@ class MediaPlayerViewModel() : ViewModel(), Player.Listener {
                 videoScalingMode = VIDEO_SCALING_MODE_DEFAULT
                 prepare()
             }.apply {
-            addListener(this@MediaPlayerViewModel)
-        }
+                addListener(this@MediaPlayerViewModel)
+            }
     }
 
     private fun destroyPlayer() {

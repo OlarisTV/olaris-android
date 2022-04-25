@@ -1,23 +1,31 @@
 package tv.olaris.android.repositories
 
 import android.util.Log
+import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.exception.ApolloException
 import com.apollographql.apollo3.exception.ApolloParseException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.apollographql.apollo3.network.okHttpClient
+import okhttp3.OkHttpClient
+import org.koin.core.component.KoinComponent
 import tv.olaris.android.*
 import tv.olaris.android.databases.Server
 import tv.olaris.android.models.*
-import tv.olaris.android.service.graphql.GraphqlClient
+import tv.olaris.android.service.http.OlarisHttpService
+import tv.olaris.android.service.http.TokenRefreshAuthenticator
 
-class OlarisGraphQLRepository(private var server: Server) {
-    private val olarisClient: GraphqlClient = OlarisApplication.applicationContext().getClient(server)
+class OlarisGraphQLRepository(
+    private val olarisClient: ApolloClient,
+    private val okHttpClient: OkHttpClient,
+    private val olarisHttpService: OlarisHttpService,
+) : KoinComponent {
 
     // TODO: DRY these two methods up as they are essentially the same thing with a different GrapqhL class. Perhaps use GrapphQL interfaces here? Would need changes on the server side
-    suspend fun findRecentlyAddedItems(): List<MediaItem> {
+    suspend fun findRecentlyAddedItems(server: Server): List<MediaItem> {
+        val newOlaris = adjustedClient(server)
         val list = mutableListOf<MediaItem>()
+
         try {
-            val res = olarisClient.get().query(RecentlyAddedQuery()).execute()
+            val res = newOlaris.query(RecentlyAddedQuery()).execute()
             if (res.data != null && !res.data!!.recentlyAdded.isNullOrEmpty()) {
                 for (item in res.data!!.recentlyAdded!!) {
                     if (item!!.__typename == "Movie") {
@@ -37,18 +45,20 @@ class OlarisGraphQLRepository(private var server: Server) {
             }
         } catch (e: ApolloException) {
             logException("FindRecentlyAddeD", e)
-        }catch(e: ApolloParseException){
+        } catch (e: ApolloParseException) {
             logException("FindRecentlyAddeD parse", e)
-        }catch(e: Exception){
+        } catch (e: Exception) {
             logException("findRecently ALL", e)
         }
         return list
     }
 
-    suspend fun findContinueWatchingItems(): List<MediaItem> {
+    suspend fun findContinueWatchingItems(server: Server): List<MediaItem> {
+        val newOlaris = adjustedClient(server)
         val list = mutableListOf<MediaItem>()
+
         try {
-            val res = olarisClient.get().query(ContinueWatchingQuery()).execute()
+            val res = newOlaris.query(ContinueWatchingQuery()).execute()
             if (res.data != null && !res.data!!.upNext.isNullOrEmpty()) {
                 for (item in res.data!!.upNext!!) {
                     if (item!!.__typename == "Movie") {
@@ -68,16 +78,18 @@ class OlarisGraphQLRepository(private var server: Server) {
             }
         } catch (e: ApolloException) {
             logException("FIndContinueWatch", e)
-        } catch(e: ApolloParseException){
+        } catch (e: ApolloParseException) {
             logException("FIndContinueWatch parse", e)
-        }catch(e: Exception){
+        } catch (e: Exception) {
             logException("findContinue ALL", e)
         }
 
         return list
     }
 
-    suspend fun updatePlayState(uuid: String, finished: Boolean, playtime: Double) {
+    suspend fun updatePlayState(server: Server, uuid: String, finished: Boolean, playtime: Double) {
+        val newOlaris = adjustedClient(server)
+
         Log.d("playstate", "$playtime.toString(), $uuid, $finished")
         try {
             val m =
@@ -86,31 +98,35 @@ class OlarisGraphQLRepository(private var server: Server) {
                     finished = finished,
                     playtime = playtime
                 )
-            olarisClient.get().mutation(m).execute()
+            newOlaris.mutation(m).execute()
         } catch (e: ApolloException) {
             logException("UpdatePlaystate", e)
         }
     }
 
-    suspend fun getStreamingUrl(uuid: String): String? {
+    suspend fun getStreamingUrl(server: Server, uuid: String): String? {
+        val newOlaris = adjustedClient(server)
         val m = CreateStreamingTicketMutation(uuid = uuid)
+
         try {
-            val res = olarisClient.get().mutation(m).execute()
+            val res = newOlaris.mutation(m).execute()
 
             if (res.data != null && res.data?.createStreamingTicket != null) {
                 return "${server.url}${res.data!!.createStreamingTicket.dashStreamingPath}"
             }
 
         } catch (e: ApolloException) {
-            logException("GetStreamingURL",e)
+            logException("GetStreamingURL", e)
         }
         return null
     }
 
-    suspend fun findMovieByUUID(uuid: String): Movie? = withContext(Dispatchers.IO) {
+    suspend fun findMovieByUUID(server: Server, uuid: String): Movie? {
+        val newOlaris = adjustedClient(server)
         var movie: Movie? = null
+
         try {
-            val res = olarisClient.get().query(FindMovieQuery(uuid = uuid)).execute()
+            val res = newOlaris.query(FindMovieQuery(uuid = uuid)).execute()
             if (res.data != null && res.data?.movies != null) {
                 val m = res.data!!.movies.first()!!
                 movie = Movie.createFromGraphQLMovieBase(m.movieBase, server.id)
@@ -118,20 +134,22 @@ class OlarisGraphQLRepository(private var server: Server) {
 
         } catch (e: ApolloException) {
             logException("FindMovieByUUID", e)
-        }catch (e: ApolloParseException){
+        } catch (e: ApolloParseException) {
             logException("FindMovieByUUID-ParseException", e)
 
         }
 
-        return@withContext movie
+        return movie
     }
 
     // We expect this can fail but this is being caught in the PagingSource
-    suspend fun getMovies(limit: Int, offset: Int): List<Movie> = withContext(Dispatchers.IO) {
+    suspend fun getMovies(server: Server, limit: Int, offset: Int): List<Movie> {
+        val newOlaris = adjustedClient(server)
         val movies: MutableList<Movie> = mutableListOf()
 
         Log.d("Olaris", "getMovies: Getting movies from GraphQL")
-        val res = olarisClient.get().query(GetMoviesQuery(limit = limit,offset = offset)).execute()
+        val res = newOlaris.query(GetMoviesQuery(limit = limit, offset = offset))
+            .execute()
         Log.d("Olaris", "getMovies: Done getting movies from GraphQL $res")
         if (res.data != null && res.data?.movies != null) {
             for (movie in res.data!!.movies) {
@@ -140,32 +158,35 @@ class OlarisGraphQLRepository(private var server: Server) {
             }
         }
 
-        return@withContext movies.toList()
+        return movies.toList()
     }
 
-    suspend fun getAllMovies(): List<Movie> = withContext(Dispatchers.IO) {
+    suspend fun getAllMovies(server: Server): List<Movie> {
+        val newOlaris = adjustedClient(server)
         val movies: MutableList<Movie> = mutableListOf()
 
         try {
-            val res = olarisClient.get().query(AllMoviesQuery()).execute()
+            val res = newOlaris.query(AllMoviesQuery()).execute()
 
             if (res.data != null && res.data?.movies != null) {
                 for (movie in res.data!!.movies) {
                     val m = movie!!
                     movies.add(Movie.createFromGraphQLMovieBase(m.movieBase, server.id))
                 }
-                return@withContext movies.toList()
+                return movies.toList()
             }
         } catch (e: ApolloException) {
             logException("getAllMovies", e)
         }
 
-        return@withContext movies
+        return movies
     }
 
-    suspend fun findSeasonByUUID(uuid: String): Season? {
+    suspend fun findSeasonByUUID(server: Server, uuid: String): Season? {
+        val newOlaris = adjustedClient(server)
+
         try {
-            val res = olarisClient.get().query(FindSeasonQuery(uuid)).execute()
+            val res = newOlaris.query(FindSeasonQuery(uuid)).execute()
             if (res.data != null) {
                 return Show.buildSeason(res.data!!.season.seasonBase, server.id)
             }
@@ -175,10 +196,12 @@ class OlarisGraphQLRepository(private var server: Server) {
         return null
     }
 
-    suspend fun getAllShows(): List<Show> {
+    suspend fun getAllShows(server: Server): List<Show> {
+        val newOlaris = adjustedClient(server)
         val shows: MutableList<Show> = mutableListOf()
+
         try {
-            val res = olarisClient.get().query(AllSeriesQuery()).execute()
+            val res = newOlaris.query(AllSeriesQuery()).execute()
             Log.d("shows", res.toString())
 
             if (res.data != null && res.data?.series != null) {
@@ -194,11 +217,16 @@ class OlarisGraphQLRepository(private var server: Server) {
         return shows
     }
 
-    suspend fun findShowByUUID(uuid: String): Show? {
+    suspend fun findShowByUUID(server: Server, uuid: String): Show? {
+        val newOlaris = adjustedClient(server)
+
         try {
-            val res = olarisClient.get().query(FindSeriesQuery(uuid)).execute()
+            val res = newOlaris.query(FindSeriesQuery(uuid)).execute()
             if (res.data != null && res.data!!.series.isNotEmpty()) {
-                return Show.createFromGraphQLSeriesBase(res.data!!.series.first()!!.seriesBase, server.id)
+                return Show.createFromGraphQLSeriesBase(
+                    res.data!!.series.first()!!.seriesBase,
+                    server.id
+                )
             }
         } catch (e: ApolloException) {
             logException("findShowByUUID", e)
@@ -206,10 +234,20 @@ class OlarisGraphQLRepository(private var server: Server) {
         return null
     }
 
+    private fun adjustedClient(server: Server): ApolloClient {
+        val newClient = okHttpClient.newBuilder()
+            .authenticator(TokenRefreshAuthenticator(olarisHttpService, server))
+            .build()
+        return olarisClient.newBuilder()
+            .okHttpClient(newClient)
+            .addHttpHeader("Authorization", "Bearer ${server.currentJWT}")
+            .serverUrl("${server.url}/olaris/m/query")
+            .build()
+    }
+
     private fun logException(from: String, e: Exception) {
         Log.e("apollo", "Helpie from $from! Error getting data: ${e.localizedMessage}")
         Log.e("apollo", "Cause: ${e.cause}")
         Log.e("apollo", e.toString())
     }
-
 }

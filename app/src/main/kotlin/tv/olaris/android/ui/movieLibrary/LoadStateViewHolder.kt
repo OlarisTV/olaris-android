@@ -22,8 +22,8 @@ class LoadStateViewHolder(
     private val progressBar: ProgressBar = binding.progressBar
     private val errorMsg: TextView = binding.errorMsg
     private val retry: Button = binding.retryButton.also {
-            it.setOnClickListener { retry() }
-        }
+        it.setOnClickListener { retry() }
+    }
 
     fun bind(loadState: LoadState) {
         if (loadState is LoadState.Error) {

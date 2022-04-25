@@ -13,12 +13,12 @@ data class Show(
     val unwatchedEpisodeCount: Int,
     val uuid: String,
     val seriesBase: SeriesBase? = null,
-){
-    var seasons : MutableList<Season> = mutableListOf()
+) {
+    var seasons: MutableList<Season> = mutableListOf()
 
     companion object {
-        fun buildSeason(seasonBase: SeasonBase, serverId: Int): Season?{
-            var season : Season?
+        fun buildSeason(seasonBase: SeasonBase, serverId: Int): Season? {
+            var season: Season?
             with(seasonBase) {
                 season = Season(
                     name,
@@ -48,7 +48,7 @@ data class Show(
                                 )
                             }
                         }
-                        if(season != null) {
+                        if (season != null) {
                             season!!.episodes.add(ep)
                         }
                     }
@@ -57,22 +57,25 @@ data class Show(
             }
             return season
         }
-        fun createFromGraphQLSeries(m: AllSeriesQuery.Series) : Show {
-            return Show(name = m.name, uuid = m.uuid,  overview = m.overview,
-                posterPath =  m.posterPath, backdropPath = m.backdropPath,
+
+        fun createFromGraphQLSeries(m: AllSeriesQuery.Series): Show {
+            return Show(
+                name = m.name, uuid = m.uuid, overview = m.overview,
+                posterPath = m.posterPath, backdropPath = m.backdropPath,
                 unwatchedEpisodeCount = m.unwatchedEpisodesCount, firstAirDate = m.firstAirDate
             )
         }
 
-        fun createFromGraphQLSeriesBase(m: SeriesBase, serverId: Int) : Show {
-            val show = Show(name = m.name, uuid = m.uuid,  overview = m.overview, seriesBase = m,
-                posterPath =  m.posterPath, backdropPath = m.backdropPath,
+        fun createFromGraphQLSeriesBase(m: SeriesBase, serverId: Int): Show {
+            val show = Show(
+                name = m.name, uuid = m.uuid, overview = m.overview, seriesBase = m,
+                posterPath = m.posterPath, backdropPath = m.backdropPath,
                 unwatchedEpisodeCount = m.unwatchedEpisodesCount, firstAirDate = m.firstAirDate
             )
-            for(s in m.seasons){
-                with(s!!.seasonBase){
+            for (s in m.seasons) {
+                with(s!!.seasonBase) {
                     val season = buildSeason(this, serverId)
-                    if(season != null) {
+                    if (season != null) {
                         season.episodes.sortBy { it.episodeNumber }
                         show.seasons.add(season)
                     }
@@ -83,12 +86,12 @@ data class Show(
         }
     }
 
-    fun fullPosterUrl() : String {
+    fun fullPosterUrl(): String {
         return "https://image.tmdb.org/t/p/w780/${this.posterPath}"
     }
 
     // TODO: Fix this on the server side
-    fun fullCoverArtUrl() : String {
+    fun fullCoverArtUrl(): String {
         //return "${baseUrl}/olaris/m/images/tmdb/w1280/${this.backdropPath.toString()}"
         return "https://image.tmdb.org/t/p/w1280/${this.backdropPath}"
     }

@@ -1,23 +1,16 @@
 package tv.olaris.android.ui.dashboard
 
-import android.content.res.Configuration
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
-import tv.olaris.android.R
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import tv.olaris.android.databinding.DashboardFragmentBinding
+import tv.olaris.android.ui.base.BaseFragment
 
 private const val ARG_SERVER_ID = "serverId"
 
-class Dashboard : Fragment() {
-    var _binding : DashboardFragmentBinding? = null
-    val binding get() = _binding!!
-
-    private val viewModel: DashboardViewModel by viewModels()
+class Dashboard : BaseFragment<DashboardFragmentBinding>(DashboardFragmentBinding::inflate) {
+    private val viewModel: DashboardViewModel by viewModel()
     private var serverId: Int = 0
 
 
@@ -28,35 +21,32 @@ class Dashboard : Fragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-
-        _binding = DashboardFragmentBinding.inflate(inflater, container, false)
-
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val spanCount = if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            resources.getInteger(R.integer.landscape_dashboard_column_count)
-        } else {
-            resources.getInteger(R.integer.dashboard_column_count)
+//        val spanCount =
+//            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//                resources.getInteger(R.integer.landscape_dashboard_column_count)
+//            } else {
+//                resources.getInteger(R.integer.dashboard_column_count)
+//            }
+
+        val continueAdapter = MediaItemAdapter { serverId ->
+            viewModel.setCurrentServer(serverId)
         }
 
-        val continueAdapter = MediaItemAdapter(requireContext())
-
         binding.recyclerContinueWatching.adapter = continueAdapter
-        binding.recyclerContinueWatching.layoutManager = GridLayoutManager(context, spanCount)
+        binding.recyclerContinueWatching.layoutManager =
+            GridLayoutManager(context, 2, GridLayoutManager.HORIZONTAL, false)
 
 
-        val recentlyAddedAdapter = MediaItemAdapter(requireContext())
+        val recentlyAddedAdapter = MediaItemAdapter { serverId ->
+            viewModel.setCurrentServer(serverId)
+        }
 
         binding.recyclerRecentlyAdded.adapter = recentlyAddedAdapter
-        binding.recyclerRecentlyAdded.layoutManager = GridLayoutManager(context, spanCount)
+        binding.recyclerRecentlyAdded.layoutManager =
+            GridLayoutManager(context, 2, GridLayoutManager.HORIZONTAL, false)
 
 
         viewModel.continueWatchingItems.observe(viewLifecycleOwner) {

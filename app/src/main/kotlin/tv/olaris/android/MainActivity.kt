@@ -4,19 +4,25 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import androidx.navigation.ui.navigateUp
 import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import tv.olaris.android.databases.Server
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+    private val mainViewModel: MainViewModel by viewModel()
+
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var drawerLayout: DrawerLayout
@@ -25,6 +31,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainViewModel.initTimer().collect()
+            }
+        }
 
         val navFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -42,7 +54,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val menu = navView.menu
 
         lifecycleScope.launch {
-            OlarisApplication.applicationContext().serversRepository.allServers.collect {
+            mainViewModel.allServers().collect {
                 Log.d("refreshDebug", "Received a collection of servers")
                 // There is a change in the serverList, update all menu items
                 for (id in serverIdList) {
@@ -55,23 +67,23 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                     serverIdList.add(s.id)
 
-                    if (OlarisApplication.applicationContext().newCheckServer(s)) {
+                    if (mainViewModel.newCheckServer(s)) {
                         menu.removeGroup(s.id)
 
                         if (it.size > 1) {
                             menu.add(s.id, 1, 0, "Dashboard").setOnMenuItemClickListener {
-                                navigateTo(R.id.dashboard, s.id)
+                                navigateTo(R.id.dashboard, s)
                                 true
                             }
                         }
 
                         menu.add(s.id, 2, 0, "Movies").setOnMenuItemClickListener {
-                            navigateTo(R.id.movieLibraryFragment, s.id)
+                            navigateTo(R.id.movieLibraryFragment, s)
                             true
                         }
 
                         menu.add(s.id, 3, 0, "TV Shows").setOnMenuItemClickListener {
-                            navigateTo(R.id.fragmentShowLibrary, s.id)
+                            navigateTo(R.id.fragmentShowLibrary, s)
                             true
                         }
                     } else {
@@ -87,10 +99,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    private fun navigateTo(fragment: Int, serverId: Int) {
-        val bundle = bundleOf("serverId" to serverId)
+    private fun navigateTo(fragment: Int, server: Server) {
+        Log.e("Navigate ", server.toString())
+        mainViewModel.setCurrentServer(server)
 
-        navController.navigate(fragment, bundle)
+        navController.navigate(fragment)
 
         drawerLayout.closeDrawer(GravityCompat.START)
     }
@@ -104,7 +117,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 drawerLayout.closeDrawer(GravityCompat.START)
             }
         }
-
         return true
     }
 
@@ -114,5 +126,4 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return navFragment.navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
     }
-
 }

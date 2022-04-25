@@ -2,23 +2,22 @@ package tv.olaris.android.ui.showDetails
 
 import android.os.Bundle
 import android.view.View
-import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.coroutines.launch
-import tv.olaris.android.OlarisApplication
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import tv.olaris.android.R
 import tv.olaris.android.databinding.FragmentShowDetailsBinding
 import tv.olaris.android.ui.base.BaseFragment
 
 private const val ARG_UUID = "uuid"
-private const val ARG_SERVER_ID = "serverId"
 
-class ShowDetailsFragment : BaseFragment<FragmentShowDetailsBinding>(FragmentShowDetailsBinding::inflate) {
+class ShowDetailsFragment :
+    BaseFragment<FragmentShowDetailsBinding>(FragmentShowDetailsBinding::inflate) {
+    private val showDetailsViewModel: ShowDetailsViewModel by viewModel()
+
     private var uuid: String? = null
-    private var serverId: Int = 0
 
     private lateinit var seasonPageAdapter: SeasonPagerAdapter
     private lateinit var viewPager: ViewPager2
@@ -28,7 +27,6 @@ class ShowDetailsFragment : BaseFragment<FragmentShowDetailsBinding>(FragmentSho
         super.onCreate(savedInstanceState)
         arguments?.let {
             uuid = it.getString(ARG_UUID).toString()
-            serverId = it.getInt(ARG_SERVER_ID)
         }
     }
 
@@ -37,34 +35,30 @@ class ShowDetailsFragment : BaseFragment<FragmentShowDetailsBinding>(FragmentSho
 
         val fragment = this
 
-        lifecycleScope.launch{
-            if(uuid != null) {
-               val show = OlarisApplication.applicationContext().getOrInitRepo(serverId).findShowByUUID(uuid!!)
+        showDetailsViewModel.showDetails.observe(viewLifecycleOwner) { show ->
+            show?.let {
+                seasonPageAdapter = SeasonPagerAdapter(fragment, it)
+                viewPager = view.findViewById(R.id.pager_show_detail_seasons)
+                viewPager.adapter = seasonPageAdapter
 
-                if(show != null) {
-                    seasonPageAdapter = SeasonPagerAdapter(fragment, show, serverId)
-                    viewPager = view.findViewById(R.id.pager_show_detail_seasons)
-                    viewPager.adapter = seasonPageAdapter
+                val tabLayout = view.findViewById<TabLayout>(R.id.tab_layout_season_list)
 
-                    val tabLayout = view.findViewById<TabLayout>(R.id.tab_layout_season_list)
+                TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+                    tab.text = it.seasons[position].name
+                }.attach()
 
-                    TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-                        tab.text = show.seasons[position].name
-                    }.attach()
+                binding.progressBarShowItem.visibility = View.INVISIBLE
+                binding.textShowDetailsAirDate.text = it.firstAirDate
+                binding.textShowDetailsShowName.text = it.name
+                binding.textShowDetailsOverview.text = it.overview
 
-                    binding.progressBarShowItem.visibility = View.INVISIBLE
-                    binding.textShowDetailsAirDate.text = show.firstAirDate
-                    binding.textShowDetailsShowName.text = show.name
-                    binding.textShowDetailsOverview.text = show.overview
-
-                    val imageUrl = show.fullPosterUrl()
-                    Glide.with(view.context).load(imageUrl).into(binding.imageViewShowPoster)
-                    Glide.with(view.context).load(show.fullCoverArtUrl()).into(binding.imageViewCoverArt
-                    )
-
-                }
+                val imageUrl = it.fullPosterUrl()
+                Glide.with(view.context).load(imageUrl).into(binding.imageViewShowPoster)
+                Glide.with(view.context).load(it.fullCoverArtUrl()).into(
+                    binding.imageViewCoverArt
+                )
             }
         }
+        showDetailsViewModel.getShowDetails(uuid)
     }
-
 }

@@ -1,6 +1,5 @@
 package tv.olaris.android.ui.dashboard
 
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.util.Log
@@ -17,12 +16,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import kotlinx.coroutines.Job
 import tv.olaris.android.R
 import tv.olaris.android.models.MediaItem
 import tv.olaris.android.ui.home.HomeFragmentDirections
 
-class MediaItemAdapter(context: Context) :
-    ListAdapter<MediaItem, MediaItemAdapter.MediaItemHolder>(DiffCallback()) {
+class MediaItemAdapter(
+    val setServer: (serverId: Int) -> Job,
+) : ListAdapter<MediaItem, MediaItemAdapter.MediaItemHolder>(DiffCallback()) {
 
     class MediaItemHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val coverArt: ImageView = view.findViewById<ImageView>(R.id.movieCoverArtImage)
@@ -41,7 +42,7 @@ class MediaItemAdapter(context: Context) :
 
     override fun onBindViewHolder(holder: MediaItemHolder, position: Int) {
         val mi = getItem(position)
-        Log.d("dashboard", "View holder ${mi.toString()}")
+        Log.d("dashboard", "View holder $mi")
         holder.nameText.text = mi.name
 
         if (mi.hasStarted()) {
@@ -54,20 +55,21 @@ class MediaItemAdapter(context: Context) :
 
         holder.subText.text = mi.subTitle
 
-        if(mi.hasPosterPath()) {
+        if (mi.hasPosterPath()) {
             Glide.with(holder.itemView.context).load(mi.fullPosterUrl())
                 .placeholder(R.drawable.placeholder_coverart).error(ColorDrawable(Color.RED))
-                .into(holder.coverArt);
+                .into(holder.coverArt)
         }
 
         holder.itemView.setOnClickListener {
-            if(mi.serverId != null) {
+            if (mi.serverId != null) {
                 val action = HomeFragmentDirections.actionHomeFragmentToMediaPlayerActivity(
                     mediaUuid = mi.uuid,
                     uuid = mi.fileUuid,
-                    serverId = mi.serverId,
                     playtime = mi.playtime.toInt()
                 )
+                setServer(mi.serverId)
+
                 /*val action = DashboardDirections.actionDashboardToFragmentFullScreenMediaPlayer(
                     mediaUuid = mi.uuid,
                     uuid = mi.fileUuid,
@@ -75,8 +77,12 @@ class MediaItemAdapter(context: Context) :
                     playtime = mi.playtime.toInt())*/
 
                 holder.view.findNavController().navigate(action)
-            }else{
-                Toast.makeText(holder.view.context, "Seems there was no server associated with this item, you should never see this, report please.", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(
+                    holder.view.context,
+                    "Seems there was no server associated with this item, you should never see this, report please.",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
     }

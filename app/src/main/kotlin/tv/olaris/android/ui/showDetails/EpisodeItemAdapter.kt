@@ -1,6 +1,5 @@
 package tv.olaris.android.ui.showDetails
 
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
@@ -16,7 +15,7 @@ import com.bumptech.glide.Glide
 import tv.olaris.android.R
 import tv.olaris.android.models.Season
 
-class EpisodeItemAdapter(context: Context, val seasonBase: Season, val serverId: Int) :
+class EpisodeItemAdapter(val seasonBase: Season) :
     RecyclerView.Adapter<EpisodeItemAdapter.EpisodeItemHolder>() {
 
     class EpisodeItemHolder(val view: View) : RecyclerView.ViewHolder(view) {
@@ -46,11 +45,11 @@ class EpisodeItemAdapter(context: Context, val seasonBase: Season, val serverId:
         holder.episodeDescription.text = episode.overview
         holder.progressBar.progress = episode.playProgress().toInt()
         holder.episodeDetails.text =
-            "Episode ${episode.episodeNumber.toString()} - ${episode.airDate}"
+            "Episode ${episode.episodeNumber} - ${episode.airDate}"
 
         Glide.with(holder.itemView.context).load(episode.stillPathUrl())
             .placeholder(R.drawable.placeholder_coverart).error(ColorDrawable(Color.RED))
-            .into(holder.episodeStillImage);
+            .into(holder.episodeStillImage)
 
         holder.playButton.setOnClickListener {
             val nav = holder.view.findNavController()
@@ -58,7 +57,6 @@ class EpisodeItemAdapter(context: Context, val seasonBase: Season, val serverId:
             val action =
                 ShowDetailsFragmentDirections.actionFragmentShowDetailsToFragmentFullScreenMediaPlayer(
                     uuid = episode.files.first().uuid,
-                    serverId = serverId,
                     episode.playtime.toInt(),
                     episode.uuid
                 )

@@ -5,22 +5,22 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.apollographql.apollo3.exception.ApolloNetworkException
 import com.bumptech.glide.load.HttpException
-import tv.olaris.android.OlarisApplication
+import org.koin.core.component.KoinComponent
 import tv.olaris.android.models.Movie
 import java.io.IOException
 
-const val MOVIES_PER_QUERY = 15
+const val MOVIES_PER_QUERY = 60
 
-class MoviesPagingSource(val serverId: Int) : PagingSource<Int, Movie>() {
+class MoviesPagingSource(
+    private val getMovies: suspend (limit: Int, offset: Int) -> List<Movie>
+) : PagingSource<Int, Movie>(), KoinComponent {
 
     override fun getRefreshKey(state: PagingState<Int, Movie>): Int? {
-        return state.anchorPosition?.let { anchorPosition ->
-            val anchorPage = state.closestPageToPosition(anchorPosition)
-            val a=  anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
-            Log.d("refreshKey", "getRefreshKey: Going back to $a")
-            return a
+        return state.anchorPosition?.let {
+            Log.d("refreshKey", "getRefreshKey: Going back to")
+            state.closestPageToPosition(it)?.prevKey?.plus(1)
+                ?: state.closestPageToPosition(it)?.nextKey?.minus(1)
         }
-
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Movie> {
@@ -28,26 +28,27 @@ class MoviesPagingSource(val serverId: Int) : PagingSource<Int, Movie>() {
 
         Log.d("PagingSource", "load: key: ${params.key} / nextPageNumber: $nextPageNumber")
         return try {
-            val movies = OlarisApplication.applicationContext().getOrInitRepo(serverId)
-                .getMovies(limit = MOVIES_PER_QUERY, offset = nextPageNumber * MOVIES_PER_QUERY)
+
+            val movies = getMovies(MOVIES_PER_QUERY, nextPageNumber * MOVIES_PER_QUERY)
 
             // TODO: There should be a way to clean this up!
-            if(movies.size >= MOVIES_PER_QUERY){
+            var nextKey: Int? = null
+
+            if (movies.size >= MOVIES_PER_QUERY) {
                 nextPageNumber += 1
-                LoadResult.Page(data = movies, prevKey = null, nextKey = nextPageNumber)
-            }else {
-                LoadResult.Page(data = movies, prevKey = null, nextKey = null)
+                nextKey = nextPageNumber
             }
 
+            LoadResult.Page(data = movies, prevKey = null, nextKey = nextKey)
 
-        } catch(exception: IOException){
+        } catch (exception: IOException) {
             LoadResult.Error(exception)
         } catch (exception: HttpException) {
             LoadResult.Error(exception)
-        } catch(exception: java.net.SocketTimeoutException){
+        } catch (exception: java.net.SocketTimeoutException) {
             Log.d("PagingSource", exception.toString())
             LoadResult.Error(exception)
-        } catch(exception: ApolloNetworkException){
+        } catch (exception: ApolloNetworkException) {
             Log.d("PagingSource", exception.toString())
             LoadResult.Error(exception)
         }

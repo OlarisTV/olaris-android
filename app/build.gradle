@@ -93,6 +93,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.4.2'
     implementation 'androidx.navigation:navigation-ui-ktx:2.4.2'
     implementation 'androidx.navigation:navigation-runtime-ktx:2.4.2'
@@ -135,22 +136,25 @@ dependencies {
 
     // Applying styles
     implementation 'com.airbnb.android:paris:2.0.1'
+
+    // Koin DI
+    implementation "io.insert-koin:koin-android:$koin_version"
 }
 
-def build_param = "${build}";
+def build_param = "${build}"
 
 if (build_param != "dev") {
     //exclude production build
     android.variantFilter { variant ->
         if (variant.buildType.name.equals('dev')) {
-            variant.setIgnore(true);
+            variant.setIgnore(true)
         }
     }
 } else {
     //exclude all except production build
     android.variantFilter { variant ->
         if (!variant.buildType.name.equals('dev')) {
-            variant.setIgnore(true);
+            variant.setIgnore(true)
         }
     }
 }

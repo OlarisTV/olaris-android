@@ -26,8 +26,4 @@ class MediaPlayerActivity : FragmentActivity() {
         tx.replace(R.id.fcv_fullscreen, fragment)
         tx.commit()
     }
-
-    override fun onPostCreate(savedInstanceState: Bundle?) {
-        super.onPostCreate(savedInstanceState)
-    }
 }
