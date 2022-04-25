@@ -1,6 +1,5 @@
 package tv.olaris.android.ui.showLibrary
 
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
@@ -17,7 +16,7 @@ import com.bumptech.glide.Glide
 import tv.olaris.android.R
 import tv.olaris.android.models.Show
 
-class ShowLibraryAdapter(context: Context, private val serverId: Int) :
+class ShowLibraryAdapter :
     ListAdapter<Show, ShowLibraryAdapter.ShowItemHolder>(DiffCallback()) {
 
     class ShowItemHolder(val view: View) : RecyclerView.ViewHolder(view) {
@@ -40,19 +39,17 @@ class ShowLibraryAdapter(context: Context, private val serverId: Int) :
 
         Glide.with(holder.itemView.context).load(s.fullPosterUrl())
             .placeholder(R.drawable.placeholder_coverart).error(ColorDrawable(Color.RED))
-            .into(holder.movieCoverArt);
+            .into(holder.movieCoverArt)
 
         holder.movieCoverArt.setOnClickListener {
             val uuid = s.uuid
             val action = ShowLibraryDirections.actionFragmentShowLibraryToFragmentShowDetails(
                 uuid = uuid,
-                serverId = serverId
             )
 
             holder.view.findNavController().navigate(action)
         }
     }
-
 }
 
 class DiffCallback : DiffUtil.ItemCallback<Show>() {

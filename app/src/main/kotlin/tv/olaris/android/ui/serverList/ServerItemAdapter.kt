@@ -1,6 +1,5 @@
 package tv.olaris.android.ui.serverList
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,20 +10,21 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.coroutines.launch
-import tv.olaris.android.OlarisApplication
 import tv.olaris.android.R
 import tv.olaris.android.databases.Server
 
-class ServerItemAdapter(context: Context) :
-    ListAdapter<Server, ServerItemAdapter.ServerItemHolder>(DiffCallback()) {
+class ServerItemAdapter(
+    private val itemClickListener: (server: Server) -> Unit,
+) : ListAdapter<Server, ServerItemAdapter.ServerItemHolder>(DiffCallback()) {
+
     class ServerItemHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val serverUrl: TextView = view.findViewById<TextView>(R.id.text_server_label)
         val deleteServerIcon: ImageView = view.findViewById<ImageView>(R.id.icon_delete_server)
         var serverVersion: TextView = view.findViewById<TextView>(R.id.text_server_version)
-        val progressStatusOffline: ProgressBar = view.findViewById(R.id.progress_server_status_offline)
-        val progressStatusOnline: ProgressBar = view.findViewById(R.id.progress_server_status_online)
-
+        val progressStatusOffline: ProgressBar =
+            view.findViewById(R.id.progress_server_status_offline)
+        val progressStatusOnline: ProgressBar =
+            view.findViewById(R.id.progress_server_status_online)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ServerItemHolder {
@@ -39,10 +39,10 @@ class ServerItemAdapter(context: Context) :
         holder.serverUrl.text = s.name
         holder.serverVersion.text = s.version
 
-        if(s.isOnline){
+        if (s.isOnline) {
             holder.progressStatusOffline.visibility = View.INVISIBLE
             holder.progressStatusOnline.visibility = View.VISIBLE
-        }else{
+        } else {
             holder.progressStatusOffline.visibility = View.VISIBLE
             holder.progressStatusOnline.visibility = View.INVISIBLE
             holder.serverVersion.text = holder.view.context.getString(R.string.server_offline)
@@ -62,11 +62,7 @@ class ServerItemAdapter(context: Context) :
                 }
 
                 .setPositiveButton(holder.view.context.getString(R.string.confirm_button)) { _, _ ->
-                    OlarisApplication.applicationContext().applicationScope.launch {
-                        OlarisApplication.applicationContext().serversRepository.deleteServer(
-                            getItem(position)
-                        )
-                    }
+                    itemClickListener(getItem(position))
                 }
                 .show()
         }

@@ -83,7 +83,7 @@ fun Activity.hideSystemUI() {
             // WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
             // - do this already in hideSystemUI() so that the bar
             // is translucent if user swipes it up
-          //  window.navigationBarColor = getColor(R.color.internal_black_semitransparent_light)
+            //  window.navigationBarColor = getColor(R.color.internal_black_semitransparent_light)
             // Finally, hide the system bars, alternative to View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
             // and SYSTEM_UI_FLAG_FULLSCREEN.
             it.hide(WindowInsets.Type.systemBars())

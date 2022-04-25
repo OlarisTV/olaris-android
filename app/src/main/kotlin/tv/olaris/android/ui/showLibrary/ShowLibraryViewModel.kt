@@ -5,19 +5,27 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import tv.olaris.android.OlarisApplication
 import tv.olaris.android.models.Show
+import tv.olaris.android.repositories.OlarisGraphQLRepository
+import tv.olaris.android.repositories.ServersRepository
 
-class ShowLibraryViewModel: ViewModel() {
+class ShowLibraryViewModel(
+    private val graphQLRepository: OlarisGraphQLRepository,
+    private val serversRepository: ServersRepository,
+) : ViewModel() {
 
-    private var _shows  = MutableLiveData<List<Show>>()
-    val shows : LiveData<List<Show>> = _shows
+    private val _shows = MutableLiveData<List<Show>>()
+    val shows: LiveData<List<Show>> = _shows
 
-    private var _dataLoaded = MutableLiveData<Boolean>()
+    private val _dataLoaded = MutableLiveData<Boolean>()
     val dataLoaded: LiveData<Boolean> = _dataLoaded
 
-    fun loadData(serverId: Int) = viewModelScope.launch {
-        _shows.value = OlarisApplication.applicationContext().getOrInitRepo(serverId).getAllShows()
+    private fun loadData() = viewModelScope.launch {
+        _shows.value = graphQLRepository.getAllShows(serversRepository.getCurrentServer())
         _dataLoaded.value = true
+    }
+
+    init {
+        loadData()
     }
 }

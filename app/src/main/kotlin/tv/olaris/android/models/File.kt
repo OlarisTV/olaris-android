@@ -1,7 +1,7 @@
 package tv.olaris.android.models
 
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import tv.olaris.android.fragment.FileBase
 
 @Serializable

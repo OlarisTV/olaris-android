@@ -6,9 +6,10 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import tv.olaris.android.models.Show
 
 
-class SeasonPagerAdapter(fragment: Fragment, val show: Show, val serverId: Int) : FragmentStateAdapter(fragment) {
+class SeasonPagerAdapter(fragment: Fragment, val show: Show) :
+    FragmentStateAdapter(fragment) {
     override fun getItemCount(): Int {
-            return show.seasons.size
+        return show.seasons.size
     }
 
     override fun createFragment(position: Int): Fragment {
@@ -17,7 +18,6 @@ class SeasonPagerAdapter(fragment: Fragment, val show: Show, val serverId: Int) 
         val fragment = SeasonDetailsFragment()
         fragment.arguments = Bundle().apply {
             // Our object is just an integer :-P
-            putInt("serverId", serverId)
             putString("seasonUUID", season.uuid)
         }
         return fragment

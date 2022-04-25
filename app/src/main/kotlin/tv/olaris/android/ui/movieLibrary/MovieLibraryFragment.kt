@@ -8,9 +8,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.GridLayoutManager
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import tv.olaris.android.R
 import tv.olaris.android.databinding.FragmentMovieLibraryBinding
 import tv.olaris.android.models.Movie
@@ -19,28 +19,22 @@ import tv.olaris.android.ui.base.BaseFragment
 private const val ARG_SERVER_ID = "serverId"
 const val movieGridSize = 3
 
-class MovieLibrary : BaseFragment<FragmentMovieLibraryBinding>(FragmentMovieLibraryBinding::inflate) {
-    private var serverId: Int = 0
-    private lateinit var viewModel: MovieLibraryViewModel
+class MovieLibrary :
+    BaseFragment<FragmentMovieLibraryBinding>(FragmentMovieLibraryBinding::inflate) {
+    private val viewModel: MovieLibraryViewModel by viewModel()
 
     companion object {
         fun newInstance() = MovieLibrary()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            serverId = it.getInt(ARG_SERVER_ID)
-            Log.d("server_id", serverId.toString())
-        }
-        viewModel =  MovieLibraryViewModel(serverId)
-    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val adapter = MovieItemAdapter()
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        val adapter = MovieItemAdapter(requireContext(), serverId)
-
-        binding.movieRecycleview.adapter = adapter.withLoadStateHeaderAndFooter(header = LoadStateAdapter(adapter::retry), footer = LoadStateAdapter(adapter::retry))
+        binding.movieRecycleview.adapter = adapter.withLoadStateHeaderAndFooter(
+            header = LoadStateAdapter(adapter::retry),
+            footer = LoadStateAdapter(adapter::retry)
+        )
 
         if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             binding.movieRecycleview.layoutManager =
@@ -55,14 +49,11 @@ class MovieLibrary : BaseFragment<FragmentMovieLibraryBinding>(FragmentMovieLibr
 
         viewLifecycleOwner.lifecycleScope.launch {
             Log.d("fragment", "onActivityCreated: launch")
-
-
             viewModel.flow.collectLatest { pagingData: PagingData<Movie> ->
                 adapter.submitData(pagingData)
-
             }
-
         }
+
         viewLifecycleOwner.lifecycleScope.launch {
             Log.d("fragment", "onActivityCreated: launc2h")
 
@@ -75,5 +66,4 @@ class MovieLibrary : BaseFragment<FragmentMovieLibraryBinding>(FragmentMovieLibr
             }
         }
     }
-
 }

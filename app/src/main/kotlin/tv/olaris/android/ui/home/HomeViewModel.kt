@@ -4,42 +4,46 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import tv.olaris.android.OlarisApplication
 import tv.olaris.android.models.MediaItem
+import tv.olaris.android.repositories.OlarisGraphQLRepository
+import tv.olaris.android.repositories.ServersRepository
 
 const val TAG = "home"
 
-class HomeViewModel : ViewModel() {
-    private var _upNextItems = MutableLiveData<List<MediaItem>>()
+class HomeViewModel(
+    private val serversRepository: ServersRepository,
+    private val graphQLRepository: OlarisGraphQLRepository,
+) : ViewModel() {
+    private val _upNextItems = MutableLiveData<List<MediaItem>>()
     val upNextItems: LiveData<List<MediaItem>> = _upNextItems
 
-    private var _recentlyAdded = MutableLiveData<List<MediaItem>>()
+    private val _recentlyAdded = MutableLiveData<List<MediaItem>>()
     val recentlyAddedItems: MutableLiveData<List<MediaItem>> = _recentlyAdded
 
+    fun setCurrentServer(serverId: Int) = viewModelScope.launch {
+        serversRepository.setCurrentServer(serversRepository.getServerById(serverId))
+    }
 
-    fun loadData() {
+    private fun loadData() {
         viewModelScope.launch {
-            OlarisApplication.applicationContext().serversRepository.allServers.collect {
+            serversRepository.allServers().collect {
 
                 val recentlyAddedList = mutableListOf<MediaItem>()
                 val continueList = mutableListOf<MediaItem>()
 
                 for (s in it) {
-                    continueList.addAll(
-                        OlarisApplication.applicationContext().getOrInitRepo(s.id)
-                            .findContinueWatchingItems()
-                    )
-                    recentlyAddedList.addAll(
-                        OlarisApplication.applicationContext().getOrInitRepo(s.id)
-                            .findRecentlyAddedItems()
-                    )
+                    continueList.addAll(graphQLRepository.findContinueWatchingItems(s))
+                    recentlyAddedList.addAll(graphQLRepository.findRecentlyAddedItems(s))
                 }
 
                 _upNextItems.value = continueList
                 _recentlyAdded.value = recentlyAddedList
             }
         }
+    }
+
+    init {
+        loadData()
     }
 }

@@ -16,9 +16,6 @@
         <action
             android:id="@+id/action_movieLibraryFragment_to_fragmentServerList"
             app:destination="@id/fragmentServerList" />
-        <argument
-            android:name="serverId"
-            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/movieDetailsFragment"
@@ -28,9 +25,6 @@
         <argument
             android:name="uuid"
             app:argType="string" />
-        <argument
-            android:name="server_id"
-            app:argType="integer" />
         <action
             android:id="@+id/action_movieDetailsFragment_to_fragmentFullScreenMediaPlayer"
             app:destination="@id/fragmentFullScreenMediaPlayer" />
@@ -65,9 +59,6 @@
         android:id="@+id/fragmentShowLibrary"
         android:name="tv.olaris.android.ui.showLibrary.ShowLibrary"
         android:label="Shows">
-        <argument
-            android:name="serverId"
-            app:argType="integer" />
         <action
             android:id="@+id/action_fragmentShowLibrary_to_fragmentShowDetails"
             app:destination="@id/fragmentShowDetails" />
@@ -80,9 +71,6 @@
         <argument
             android:name="uuid"
             app:argType="string" />
-        <argument
-            android:name="serverId"
-            app:argType="integer" />
         <action
             android:id="@+id/action_fragmentShowDetails_to_fragmentFullScreenMediaPlayer"
             app:destination="@id/fragmentFullScreenMediaPlayer" />
@@ -96,9 +84,6 @@
             android:name="uuid"
             app:argType="string" />
         <argument
-            android:name="serverId"
-            app:argType="integer" />
-        <argument
             android:name="playtime"
             app:argType="integer" />
         <argument
@@ -110,9 +95,6 @@
         android:name="tv.olaris.android.ui.dashboard.Dashboard"
         android:label="Dashboard"
         tools:layout="@layout/dashboard_fragment">
-        <argument
-            android:name="serverId"
-            app:argType="integer" />
         <action
             android:id="@+id/action_dashboard_to_fragmentFullScreenMediaPlayer"
             app:destination="@id/fragmentFullScreenMediaPlayer" />
@@ -121,7 +103,7 @@
         android:id="@+id/homeFragment"
         android:name="tv.olaris.android.ui.home.HomeFragment"
         android:label="Home"
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/dashboard_fragment" >
         <action
             android:id="@+id/action_homeFragment_to_mediaPlayerActivity"
             app:destination="@id/mediaPlayerActivity" />
@@ -137,9 +119,6 @@
         <argument
             android:name="uuid"
             app:argType="string" />
-        <argument
-            android:name="serverId"
-            app:argType="integer" />
         <argument
             android:name="playtime"
             app:argType="integer" />

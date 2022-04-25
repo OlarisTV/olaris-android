@@ -22,10 +22,26 @@ class Episode(
     //lateinit var posterUrl: String
 
     constructor(base: EpisodeBase, serverId: Int) :
-            this(base.name, base.overview, base.stillPath, base.airDate, base.episodeNumber, base.uuid, serverId)
+            this(
+                base.name,
+                base.overview,
+                base.stillPath,
+                base.airDate,
+                base.episodeNumber,
+                base.uuid,
+                serverId
+            )
 
     constructor(base: EpisodeBase, seasonBase: SeasonBase?, serverId: Int) :
-            this(base.name, base.overview, base.stillPath, base.airDate, base.episodeNumber, base.uuid, serverId) {
+            this(
+                base.name,
+                base.overview,
+                base.stillPath,
+                base.airDate,
+                base.episodeNumber,
+                base.uuid,
+                serverId
+            ) {
         if (seasonBase != null) {
             this.posterUrl = "olaris/m/images/tmdb/w300/${seasonBase.posterPath}"
             this.posterPath = seasonBase.posterPath
@@ -36,7 +52,7 @@ class Episode(
             this.playtime = base.playState?.playstateBase?.playtime!!
             this.finished = base.playState.playstateBase.finished == true
 
-            if(base.files.isNotEmpty()){
+            if (base.files.isNotEmpty()) {
                 this.runtime = base.files.first()!!.fileBase.totalDuration!!
             }
         }
@@ -45,8 +61,8 @@ class Episode(
     val files: MutableList<File> = mutableListOf()
 
 
-    fun stillPathUrl() : String {
-       // return "${baseUrl}/olaris/m/images/tmdb/w300/${stillPath}"
+    fun stillPathUrl(): String {
+        // return "${baseUrl}/olaris/m/images/tmdb/w300/${stillPath}"
         return "${baseImageUrl}/w300/${stillPath}"
     }
 }
